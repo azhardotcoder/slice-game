@@ -7,7 +7,6 @@ slice_game_apk/test_build.apk
 decompiled/
 backup/
 rea/
-reference_frames/
 split_config*.apk
 *.png
 .DS_Store
