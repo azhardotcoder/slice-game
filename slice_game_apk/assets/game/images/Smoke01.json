@@ -1,0 +1,48 @@
+{
+    "skeleton": {
+        "hash": "L2QGBmVRvzQ",
+        "spine": "4.1.21",
+        "x": -65.08,
+        "y": -63.8,
+        "width": 129.6,
+        "height": 129.6,
+        "images": "",
+        "audio": ""
+    },
+    "bones": [{ "name": "root" }],
+    "slots": [{ "name": "img/1", "bone": "root", "attachment": "img/" }],
+    "skins": [
+        {
+            "name": "default",
+            "attachments": {
+                "img/1": {
+                    "img/": {
+                        "x": -0.28,
+                        "y": 1,
+                        "scaleX": 0.12,
+                        "scaleY": 0.12,
+                        "width": 1080,
+                        "height": 1080,
+                        "sequence": { "count": 9 }
+                    }
+                }
+            }
+        }
+    ],
+    "animations": {
+        "animation": {
+            "attachments": {
+                "default": {
+                    "img/1": {
+                        "img/": {
+                            "sequence": [
+                                { "mode": "loop", "delay": 0.0333 },
+                                { "time": 0.3, "mode": "loop", "index": 3, "delay": 0.0833 }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

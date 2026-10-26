@@ -1,0 +1,81 @@
+{
+    "files": [
+        {
+            "jsonURL": "assets/images/spine/small_meteors/Meteor01/Meteor01.json",
+            "atlasURL": ["assets/images/spine/small_meteors/Meteor01/Meteor01.atlas.txt"],
+            "preMultipliedAlpha": true,
+            "type": "spine",
+            "key": "Meteor01"
+        },
+        {
+            "jsonURL": "assets/images/spine/big_meteors/bmeteor0/bmeteor0.json",
+            "atlasURL": ["assets/images/spine/big_meteors/bmeteor0/bmeteor0.atlas.txt"],
+            "preMultipliedAlpha": true,
+            "type": "spine",
+            "key": "bmeteor0"
+        },
+        {
+            "jsonURL": "assets/images/spine/backgrounds/Planet/Planet.json",
+            "atlasURL": ["assets/images/spine/backgrounds/Planet/Planet.atlas.txt"],
+            "preMultipliedAlpha": true,
+            "type": "spine",
+            "key": "Planet"
+        },
+        {
+            "jsonURL": "assets/images/spine/backgrounds/ScoreScreen/ScoreScreen.json",
+            "atlasURL": ["assets/images/spine/backgrounds/ScoreScreen/ScoreScreen.atlas.txt"],
+            "preMultipliedAlpha": true,
+            "type": "spine",
+            "key": "ScoreScreen"
+        },
+        {
+            "jsonURL": "assets/images/spine/backgrounds/StartScreen/StartScreen.json",
+            "atlasURL": ["assets/images/spine/backgrounds/StartScreen/StartScreen.atlas.txt"],
+            "preMultipliedAlpha": true,
+            "type": "spine",
+            "key": "StartScreen"
+        },
+        {
+            "jsonURL": "assets/images/spine/backgrounds/Explode01/Explode01.json",
+            "atlasURL": ["assets/images/spine/backgrounds/Explode01/Explode01.atlas.txt"],
+            "preMultipliedAlpha": true,
+            "type": "spine",
+            "key": "Explode01"
+        },
+        {
+            "jsonURL": "assets/images/spine/backgrounds/Smoke01/Smoke01.json",
+            "atlasURL": ["assets/images/spine/backgrounds/Smoke01/Smoke01.atlas.txt"],
+            "preMultipliedAlpha": true,
+            "type": "spine",
+            "key": "Smoke01"
+        },
+        {
+            "jsonURL": "assets/images/spine/negative_objects/Bomb01/Bomb01.json",
+            "atlasURL": ["assets/images/spine/negative_objects/Bomb01/Bomb01.atlas.txt"],
+            "preMultipliedAlpha": true,
+            "type": "spine",
+            "key": "Bomb01"
+        },
+        {
+            "jsonURL": "assets/images/spine/small_meteors/Meteor01_fx/Meteor01_fx.json",
+            "atlasURL": ["assets/images/spine/small_meteors/Meteor01_fx/Meteor01_fx.atlas.txt"],
+            "preMultipliedAlpha": true,
+            "type": "spine",
+            "key": "Meteor01_fx"
+        },
+        {
+            "jsonURL": "assets/images/spine/big_meteors/bmeteor0_fx/bmeteor0_fx.json",
+            "atlasURL": ["assets/images/spine/big_meteors/bmeteor0_fx/bmeteor0_fx.atlas.txt"],
+            "preMultipliedAlpha": true,
+            "type": "spine",
+            "key": "bmeteor0_fx"
+        },
+        {
+            "jsonURL": "assets/images/spine/backgrounds/StartBG/StartBG.json",
+            "atlasURL": ["assets/images/spine/backgrounds/StartBG/StartBG.atlas.txt"],
+            "preMultipliedAlpha": true,
+            "type": "spine",
+            "key": "StartBG"
+        }
+    ]
+}

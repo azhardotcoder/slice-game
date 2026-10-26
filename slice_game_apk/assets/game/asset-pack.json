@@ -1,0 +1,174 @@
+{
+    "section1": {
+        "files": [
+            {
+                "url": "assets/images/slice/backgrounds/bg0.svg",
+                "svgConfig": {
+                    "width": 0,
+                    "height": 0,
+                    "scale": 0
+                },
+                "type": "svg",
+                "key": "bg0"
+            },
+            {
+                "url": ["assets/audios/BGMusic_05.mp3"],
+                "type": "audio",
+                "key": "BGMusic_05"
+            },
+            {
+                "url": ["assets/audios/BGMusic_07.mp3"],
+                "type": "audio",
+                "key": "BGMusic_07"
+            },
+            {
+                "url": "assets/images/slice/stars/coin.svg",
+                "svgConfig": {
+                    "width": 0,
+                    "height": 0,
+                    "scale": 0
+                },
+                "type": "svg",
+                "key": "coin"
+            },
+            {
+                "url": "assets/images/slice/button/continue.svg",
+                "svgConfig": {
+                    "width": 0,
+                    "height": 0,
+                    "scale": 0
+                },
+                "type": "svg",
+                "key": "continue"
+            },
+            {
+                "atlasURL": "assets/atlas/flares.json",
+                "textureURL": "assets/atlas/flares.webp",
+                "type": "atlas",
+                "key": "flares"
+            },
+            {
+                "url": ["assets/audios/Lose.mp3"],
+                "type": "audio",
+                "key": "Lose"
+            },
+            {
+                "url": ["assets/audios/NormalMeteor_Slice01.mp3"],
+                "type": "audio",
+                "key": "NormalMeteor_Slice01"
+            },
+            {
+                "url": ["assets/audios/NormalMeteor_Slice02.mp3"],
+                "type": "audio",
+                "key": "NormalMeteor_Slice02"
+            },
+            {
+                "url": ["assets/audios/Planet_Hit.mp3"],
+                "type": "audio",
+                "key": "Planet_Hit"
+            },
+            {
+                "url": "assets/images/slice/button/playnext.svg",
+                "svgConfig": {
+                    "width": 0,
+                    "height": 0,
+                    "scale": 0
+                },
+                "type": "svg",
+                "key": "playnext"
+            },
+            {
+                "url": ["assets/audios/Rocket_Slice.mp3"],
+                "type": "audio",
+                "key": "Rocket_Slice"
+            },
+            {
+                "url": "assets/images/spine/backgrounds/StartScreen/SlicetoBegin.svg",
+                "svgConfig": {
+                    "width": 0,
+                    "height": 0,
+                    "scale": 0
+                },
+                "type": "svg",
+                "key": "SlicetoBegin"
+            },
+            {
+                "url": "assets/images/slice/stars/star1.svg",
+                "svgConfig": {
+                    "width": 0,
+                    "height": 0,
+                    "scale": 0
+                },
+                "type": "svg",
+                "key": "star1"
+            },
+            {
+                "url": "assets/images/slice/stars/star2.svg",
+                "svgConfig": {
+                    "width": 0,
+                    "height": 0,
+                    "scale": 0
+                },
+                "type": "svg",
+                "key": "star2"
+            },
+            {
+                "url": "assets/images/spine/backgrounds/StartBG/StartBG.svg",
+                "svgConfig": {
+                    "width": 0,
+                    "height": 0,
+                    "scale": 0
+                },
+                "type": "svg",
+                "key": "StartBG"
+            },
+            {
+                "url": ["assets/audios/Swipe_01.mp3"],
+                "type": "audio",
+                "key": "Swipe_01"
+            },
+            {
+                "url": ["assets/audios/Swipe_02.mp3"],
+                "type": "audio",
+                "key": "Swipe_02"
+            },
+            {
+                "url": ["assets/audios/Swipe_Bonus.mp3"],
+                "type": "audio",
+                "key": "Swipe_Bonus"
+            },
+            {
+                "url": ["assets/audios/Win.mp3"],
+                "type": "audio",
+                "key": "Win"
+            },
+            {
+                "url": "assets/images/slice/button/x.svg",
+                "svgConfig": {
+                    "width": 0,
+                    "height": 0,
+                    "scale": 0
+                },
+                "type": "svg",
+                "key": "x"
+            },
+            {
+                "url": "assets/images/slice/button/share.svg",
+                "svgConfig": {
+                    "width": 0,
+                    "height": 0,
+                    "scale": 0
+                },
+                "type": "svg",
+                "key": "share"
+            }
+        ]
+    },
+    "meta": {
+        "app": "Phaser Editor 2D - Asset Pack Editor",
+        "contentType": "phasereditor2d.pack.core.AssetContentType",
+        "url": "https://phasereditor2d.com",
+        "version": 2,
+        "showAllFilesInBlocks": false
+    }
+}

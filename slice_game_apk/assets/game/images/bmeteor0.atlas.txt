@@ -1,0 +1,13 @@
+bmeteor0.webp
+size:987,630
+filter:Linear,Linear
+pma:true
+scale:0.75
+bmeteor_05
+bounds:388,8,267,234
+offsets:57,52,384,350
+bmeteor_trail1_05
+bounds:388,244,384,597
+rotate:90
+bmeteor_trail2_05
+bounds:2,2,384,626

@@ -1,0 +1,111 @@
+{
+    "skeleton": {
+        "hash": "NCRm8PBtJoQ",
+        "spine": "4.1.21",
+        "x": -383.16,
+        "y": -0.5,
+        "width": 768.66,
+        "height": 312,
+        "images": "",
+        "audio": ""
+    },
+    "bones": [{ "name": "root" }],
+    "slots": [
+        { "name": "Planet04", "bone": "root", "attachment": "Planet04" },
+        { "name": "Planet04_Grey2", "bone": "root", "attachment": "Planet04_Grey" },
+        { "name": "Crack01", "bone": "root", "attachment": "Crack01" },
+        { "name": "Crack02", "bone": "root", "attachment": "Crack02" },
+        { "name": "Crack03", "bone": "root", "attachment": "Crack03" }
+    ],
+    "skins": [
+        {
+            "name": "default",
+            "attachments": {
+                "Crack01": {
+                    "Crack01": {
+                        "x": -57,
+                        "y": 179.02,
+                        "scaleX": 0.7748,
+                        "scaleY": 0.7748,
+                        "width": 512,
+                        "height": 184
+                    }
+                },
+                "Crack02": {
+                    "Crack02": {
+                        "x": 268.02,
+                        "y": 165.93,
+                        "scaleX": 0.165,
+                        "scaleY": 0.165,
+                        "width": 512,
+                        "height": 872
+                    }
+                },
+                "Crack03": {
+                    "Crack03": {
+                        "x": 12.81,
+                        "y": 30.78,
+                        "scaleX": 0.2541,
+                        "scaleY": 0.2541,
+                        "width": 512,
+                        "height": 243
+                    }
+                },
+                "Planet04": {
+                    "Planet04": { "x": 1.5, "y": 155.5, "scaleX": 1.5, "scaleY": 1.5, "width": 512, "height": 208 }
+                },
+                "Planet04_Grey2": {
+                    "Planet04_Grey": {
+                        "x": 0.84,
+                        "y": 155.5,
+                        "scaleX": 1.5,
+                        "scaleY": 1.5,
+                        "width": 512,
+                        "height": 208
+                    }
+                }
+            }
+        }
+    ],
+    "animations": {
+        "animation": {
+            "slots": {
+                "Crack01": { "rgba": [{ "color": "ffffff00" }] },
+                "Crack02": { "rgba": [{ "color": "ffffff00" }] },
+                "Crack03": { "rgba": [{ "color": "ffffff00" }] },
+                "Planet04_Grey2": { "rgba": [{ "color": "ffffff00" }] }
+            }
+        },
+        "Crack_01": {
+            "slots": {
+                "Crack01": { "rgba": [{ "color": "ffffffff" }] },
+                "Planet04": { "rgba": [{ "color": "ffffff00" }] },
+                "Planet04_Grey2": { "rgba": [{ "color": "ffffffff" }] }
+            }
+        },
+        "Crack_02": {
+            "slots": {
+                "Crack02": { "rgba": [{ "color": "ffffffff" }] },
+                "Planet04": { "rgba": [{ "color": "ffffff00" }] },
+                "Planet04_Grey2": { "rgba": [{ "color": "ffffffff" }] }
+            }
+        },
+        "Crack_03": { "slots": { "Crack03": { "rgba": [{ "color": "ffffffff" }] } } },
+        "Crack_04": {
+            "slots": {
+                "Crack01": { "rgba": [{ "color": "ffffff00" }] },
+                "Crack02": { "rgba": [{ "color": "ffffff00" }] },
+                "Crack03": { "rgba": [{ "color": "ffffff00" }] },
+                "Planet04_Grey2": { "rgba": [{ "color": "ffffff00" }] }
+            }
+        },
+        "Crack_05": {
+            "slots": {
+                "Crack01": { "rgba": [{ "color": "ffffff00" }] },
+                "Crack02": { "rgba": [{ "color": "ffffff00" }] },
+                "Crack03": { "rgba": [{ "color": "ffffff00" }] },
+                "Planet04_Grey2": { "rgba": [{ "color": "ffffff00" }] }
+            }
+        }
+    }
+}

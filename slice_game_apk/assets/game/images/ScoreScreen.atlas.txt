@@ -1,0 +1,35 @@
+ScoreScreen.webp
+size:860,1027
+filter:Linear,Linear
+pma:true
+Better luck next time
+bounds:691,4,509,37
+offsets:0,0,512,37
+rotate:90
+Coin1
+bounds:730,240,58,107
+rotate:90
+FrameLose
+bounds:2,2,509,687
+offsets:0,1,513,689
+rotate:90
+Group (31)
+bounds:730,178,60,61
+rotate:90
+Group 1000004072
+bounds:730,300,83,123
+rotate:90
+Scorescreen_1
+bounds:2,513,512,687
+offsets:0,1,512,689
+rotate:90
+Vector (16)
+bounds:730,385,128,128
+Yay! You won
+bounds:779,515,510,75
+offsets:2,1,512,78
+rotate:90
+You Lost!
+bounds:691,515,510,86
+offsets:2,0,512,88
+rotate:90

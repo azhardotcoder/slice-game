@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>fire</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
+            touch-action: none;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0d0722;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #ffffff;
+        }
+        #game-stage {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            /* Exact vertical gradient matching frames 023-028 */
+            background: linear-gradient(180deg, #100827 0%, #1e1145 35%, #462c75 68%, #78589e 88%, #9d83be 100%);
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            z-index: 1;
+        }
+
+        /* Top HUD elements matching exact screen recording frames */
+        .hud-overlay {
+            position: absolute;
+            top: env(safe-area-inset-top, 24px);
+            left: 18px;
+            right: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .btn-close {
+            pointer-events: auto;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            outline: none;
+        }
+        .btn-close img {
+            width: 22px;
+            height: 22px;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.7));
+        }
+
+        /* Hazard Flaming Skull Badge (Frame 028) */
+        #hazardBadge {
+            pointer-events: auto;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 60, 20, 0.2);
+            border: 1px solid rgba(255, 120, 40, 0.6);
+            border-radius: 50%;
+            box-shadow: 0 0 16px rgba(255, 80, 20, 0.5);
+            animation: pulseHazard 1.4s infinite ease-in-out;
+        }
+        #hazardBadge canvas {
+            position: relative;
+            width: 34px;
+            height: 38px;
+        }
+        @keyframes pulseHazard {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 14px rgba(255, 80, 20, 0.4); }
+            50% { transform: scale(1.1); box-shadow: 0 0 24px rgba(255, 100, 20, 0.8); }
+        }
+
+        /* Exact Center Top Score Pill from frame 023-028 */
+        .score-pill-container {
+            position: absolute;
+            top: env(safe-area-inset-top, 22px);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            pointer-events: none;
+        }
+        .score-pill {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 90px;
+            height: 34px;
+            padding: 0 24px;
+            background: rgba(45, 25, 78, 0.68);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .score-num {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Intro Portal & Slice to Begin Banner (Frame 022) */
+        #startBannerContainer {
+            position: absolute;
+            top: 48%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+        #startBannerContainer.hidden {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.85);
+            pointer-events: none;
+        }
+        #sliceToBeginImg {
+            width: 270px;
+            max-width: 85vw;
+            height: auto;
+            animation: pulseGlow 2.2s infinite ease-in-out;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 16px rgba(235, 76, 109, 0.5)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 32px rgba(135, 26, 220, 0.9)); }
+        }
+
+        /* End / Score Screen Overlay */
+        #scoreScreenModal {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(6, 4, 14, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            z-index: 20;
+            opacity: 1;
+            transition: opacity 0.4s ease;
+        }
+        #scoreScreenModal.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .score-card-box {
+            position: relative;
+            width: 320px;
+            max-width: 90vw;
+            background: #121020;
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+            padding: 32px 24px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .score-title {
+            font-size: 26px;
+            font-weight: 900;
+            margin-bottom: 6px;
+        }
+        .score-title.win {
+            color: #00f59b;
+            text-shadow: 0 0 16px rgba(0, 245, 155, 0.6);
+        }
+        .score-title.lose {
+            color: #ff3366;
+            text-shadow: 0 0 16px rgba(255, 51, 102, 0.6);
+        }
+        .score-subtitle {
+            font-size: 13px;
+            color: #8f8ea3;
+            margin-bottom: 20px;
+        }
+        .coins-won-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 215, 0, 0.12);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 40px;
+            padding: 10px 24px;
+            margin-bottom: 28px;
+        }
+        .coins-won-badge img {
+            width: 28px;
+            height: 28px;
+        }
+        .coins-won-text {
+            font-size: 28px;
+            font-weight: 900;
+            color: #ffd700;
+        }
+        .action-row {
+            display: flex;
+            gap: 14px;
+            width: 100%;
+            justify-content: center;
+        }
+        .btn-svg-action {
+            background: none;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            transition: transform 0.15s;
+        }
+        .btn-svg-action:active {
+            transform: scale(0.95);
+        }
+        .btn-svg-action img {
+            height: 48px;
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-stage">
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Top HUD Elements: Close X on left (or hazard badge), Score Pill in Center -->
+        <div class="hud-overlay">
+            <button class="btn-close" id="btnCross" title="Close">
+                <img src="images/x.svg" alt="close">
+            </button>
+            <div id="hazardBadge" title="Danger">
+                <canvas id="hazardCanvas" width="60" height="70"></canvas>
+            </div>
+            <div style="width: 40px;"></div><!-- Balance layout -->
+        </div>
+
+        <!-- Exact Center Score Pill (Matches Frame 023-028) -->
+        <div class="score-pill-container">
+            <div class="score-pill">
+                <span class="score-num" id="hudScore">0</span>
+            </div>
+        </div>
+
+        <!-- Centered "Slice to Begin" Banner (Matches Frame 022) -->
+        <div id="startBannerContainer">
+            <img src="images/SlicetoBegin.svg" id="sliceToBeginImg" alt="Slice to Begin">
+        </div>
+
+        <!-- Official Score Screen -->
+        <div id="scoreScreenModal" class="hidden">
+            <div class="score-card-box">
+                <div class="score-title win" id="scoreTitle">Yay! You won</div>
+                <div class="score-subtitle" id="scoreSubTitle">Cashback added to your Slice rewards</div>
+                <div class="coins-won-badge">
+                    <img src="images/coin.svg" alt="coin">
+                    <span class="coins-won-text" id="finalCoinDisplay">₹150</span>
+                </div>
+                <div class="action-row">
+                    <button class="btn-svg-action" id="btnPlayNext">
+                        <img src="images/playnext.svg" alt="Play Next">
+                    </button>
+                    <button class="btn-svg-action" id="btnShare">
+                        <img src="images/share.svg" alt="Share">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        // --- 1. Audio Assets ---
+        const audioList = {
+            bgMusic: 'audio/BGMusic_05.mp3',
+            slice1: 'audio/NormalMeteor_Slice01.mp3',
+            slice2: 'audio/NormalMeteor_Slice02.mp3',
+            bonusSlice: 'audio/Rocket_Slice.mp3',
+            swipe1: 'audio/Swipe_01.mp3',
+            swipe2: 'audio/Swipe_02.mp3',
+            planetHit: 'audio/Planet_Hit.mp3',
+            win: 'audio/Win.mp3',
+            lose: 'audio/Lose.mp3'
+        };
+
+        const audioPool = {};
+        Object.keys(audioList).forEach(k => {
+            try {
+                const a = new Audio(audioList[k]);
+                a.preload = 'auto';
+                if (k === 'bgMusic') a.loop = true;
+                audioPool[k] = a;
+            } catch(e) {}
+        });
+
+        function playSfx(key, vol = 1.0) {
+            if (!audioPool[key]) return;
+            try {
+                const s = audioPool[key].cloneNode();
+                s.volume = vol;
+                s.play().catch(() => {});
+            } catch(e) {}
+        }
+
+        function triggerVibration() {
+            try {
+                if (window.AndroidInterface && typeof window.AndroidInterface.handleMessage === 'function') {
+                    window.AndroidInterface.handleMessage("haptics");
+                } else if (navigator.vibrate) {
+                    navigator.vibrate(40);
+                }
+            } catch(e) {}
+        }
+
+        // --- 2. Canvas & Sizing ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const hazardCanvas = document.getElementById('hazardCanvas');
+        const hCtx = hazardCanvas.getContext('2d');
+
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        let dpr = window.devicePixelRatio || 1;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            dpr = window.devicePixelRatio || 1;
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            ctx.scale(dpr, dpr);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // --- 3. Textures & Atlas Loading ---
+        const imgSources = {
+            planet: 'images/Planet.webp',
+            meteor: 'images/Meteor01.webp',
+            bmeteor: 'images/bmeteor0.webp',
+            bomb: 'images/Bomb01.webp',
+            meteorFx: 'images/Meteor01_fx.webp',
+            explode: 'images/Explode01.webp',
+            flares: 'images/flares.webp'
+        };
+
+        const imgs = {};
+        let loadedCount = 0;
+        const totalImages = Object.keys(imgSources).length;
+        Object.keys(imgSources).forEach(k => {
+            const im = new Image();
+            im.src = imgSources[k];
+            im.onload = () => { loadedCount++; };
+            imgs[k] = im;
+        });
+
+        // 10 Exact frames from Bomb01.atlas.txt (all rotate:90 in atlas)
+        const BOMB_FRAMES = [
+            { x: 130, y: 111, w: 106, h: 126 },
+            { x: 130, y: 2,   w: 107, h: 125 },
+            { x: 131, y: 328, w: 107, h: 127 },
+            { x: 2,   y: 327, w: 107, h: 127 },
+            { x: 2,   y: 2,   w: 106, h: 125 },
+            { x: 131, y: 219, w: 107, h: 127 },
+            { x: 2,   y: 436, w: 108, h: 127 },
+            { x: 2,   y: 110, w: 105, h: 126 },
+            { x: 2,   y: 217, w: 108, h: 126 },
+            { x: 131, y: 437, w: 107, h: 127 }
+        ];
+
+        // Exact 10 frames from Meteor01_fx.atlas.txt
+        const METEOR_FX_FRAMES = [
+            { x: 925, y: 49, w: 26,  h: 39 },
+            { x: 860, y: 12, w: 63,  h: 76 },
+            { x: 768, y: 2,  w: 86,  h: 90 },
+            { x: 666, y: 6,  w: 100, h: 82 },
+            { x: 548, y: 6,  w: 116, h: 82 },
+            { x: 419, y: 17, w: 127, h: 71 },
+            { x: 284, y: 13, w: 133, h: 75 },
+            { x: 144, y: 10, w: 138, h: 78 },
+            { x: 2,   y: 10, w: 140, h: 78 }
+        ];
+
+        // Background Star Field
+        const bgStars = [];
+        for (let i = 0; i < 40; i++) {
+            bgStars.push({
+                x: Math.random(),
+                y: Math.random() * 0.85,
+                size: Math.random() * 2.2 + 1.2,
+                twinkleSpeed: Math.random() * 0.04 + 0.02,
+                phase: Math.random() * Math.PI * 2,
+                isSpike: Math.random() > 0.65
+            });
+        }
+
+        // --- 4. Game State & Objects ---
+        let state = 'READY'; // READY, PLAYING, OVER
+        let score = 0;
+        let planetHealth = 3;
+        let planetCracked = false;
+        let hazardActive = false;
+        let screenShake = 0;
+        let nextWaveTime = 0;
+        let waveIndex = 0;
+        let bombAnimTick = 0;
+        let portalScale = 1.0;
+        let portalTransition = 0;
+
+        const bladePoints = [];
+        const MAX_BLADE_AGE = 160;
+        let lastSwipeSound = 0;
+        let isTouching = false;
+
+        const targets = [];
+        const halves = [];
+        const hitEffects = [];
+        const bubbles = [];
+        const planetImpacts = [];
+
+        // --- 5. Slice to Begin Hitbox ---
+        function checkStartSlice(p1, p2) {
+            if (state !== 'READY') return;
+            const banner = document.getElementById('sliceToBeginImg');
+            if (!banner) return;
+            const rect = banner.getBoundingClientRect();
+            const midX = rect.left + rect.width / 2;
+            const midY = rect.top + rect.height / 2;
+            const rad = rect.height * 0.9;
+
+            if (distToSegmentSquared(midX, midY, p1.x, p1.y, p2.x, p2.y) <= rad * rad) {
+                triggerVibration();
+                playSfx('slice1', 0.95);
+                spawnBubbleBurst(midX, midY, 12);
+                document.getElementById('startBannerContainer').classList.add('hidden');
+                portalTransition = 1;
+                setTimeout(() => {
+                    startPlay();
+                }, 300);
+            }
+        }
+
+        function startPlay() {
+            state = 'PLAYING';
+            score = 0;
+            planetHealth = 3;
+            planetCracked = false;
+            hazardActive = false;
+            document.getElementById('hazardBadge').style.display = 'none';
+            document.getElementById('btnCross').style.display = 'flex';
+            updateScoreHUD();
+            waveIndex = 0;
+            nextWaveTime = performance.now() + 500;
+
+            if (audioPool.bgMusic) {
+                audioPool.bgMusic.currentTime = 0;
+                audioPool.bgMusic.volume = 0.5;
+                audioPool.bgMusic.play().catch(() => {});
+            }
+        }
+
+        function updateScoreHUD() {
+            document.getElementById('hudScore').innerText = score;
+        }
+
+        // --- 6. Physics Targets (Exact Visuals & Sizing) ---
+        class Target {
+            constructor(forceBomb = false) {
+                this.isBomb = forceBomb;
+                if (!this.isBomb) {
+                    this.isBonus = Math.random() < 0.22; // 22% big meteor
+                } else {
+                    this.isBonus = false;
+                }
+
+                // EXACT sizing matching frame 024-026:
+                // Small meteor head radius ~ 18-20px (36-40px diameter)
+                // Big meteor head radius ~ 28-32px (56-64px diameter)
+                // Bomb radius ~ 25px (50px diameter)
+                const baseUnit = Math.min(width, 420) / 400;
+                if (this.isBonus) {
+                    this.radius = 29 * baseUnit;
+                    this.tailLen = 190 * baseUnit;
+                } else if (this.isBomb) {
+                    this.radius = 25 * baseUnit;
+                    this.tailLen = 0;
+                } else {
+                    this.radius = 18.5 * baseUnit;
+                    this.tailLen = 135 * baseUnit;
+                }
+
+                this.x = Math.random() * (width - this.radius * 4) + this.radius * 2;
+                this.y = -this.radius * 2 - 20;
+
+                // Gentle natural velocity towards bottom planet
+                this.vx = (Math.random() - 0.5) * 1.8;
+                this.vy = Math.random() * 1.8 + 3.4;
+                this.rot = (Math.random() - 0.5) * 0.4;
+                this.rotSpeed = (Math.random() - 0.5) * 0.03;
+                this.frameOffset = Math.floor(Math.random() * 10);
+                this.sliced = false;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.rot += this.rotSpeed;
+            }
+
+            draw(ctx) {
+                ctx.save();
+
+                if (this.isBomb) {
+                    // Draw Animated Flaming Skull (Bomb01.webp)
+                    const fIdx = (Math.floor(bombAnimTick) + this.frameOffset) % BOMB_FRAMES.length;
+                    const f = BOMB_FRAMES[fIdx];
+
+                    ctx.translate(this.x, this.y);
+
+                    // Subtle fiery aura
+                    const pulse = (Math.sin(performance.now() * 0.012 + this.frameOffset) + 1) * 0.5;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius * 1.15, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 90, 20, ${0.12 + pulse * 0.15})`;
+                    ctx.fill();
+
+                    // Texture in atlas is rotated 90 deg clockwise -> rotate -90 deg (-PI/2) to make upright
+                    ctx.rotate(-Math.PI / 2);
+                    if (imgs.bomb.complete) {
+                        const drawH = this.radius * 2.1;
+                        const drawW = drawH * (f.h / f.w);
+                        ctx.drawImage(imgs.bomb, f.x, f.y, f.w, f.h, -drawW / 2, -drawH / 2, drawW, drawH);
+                    }
+                } else {
+                    // Draw Meteor with Exact Conical Gradient Tail (Frames 024-025)
+                    const angle = Math.atan2(this.vy, this.vx);
+                    const tailAngle = angle + Math.PI; // Straight backwards from movement
+
+                    const tipX = this.x + Math.cos(tailAngle) * this.tailLen;
+                    const tipY = this.y + Math.sin(tailAngle) * this.tailLen;
+
+                    // Perpendicular unit vector for conical width
+                    const nx = -Math.sin(tailAngle);
+                    const ny = Math.cos(tailAngle);
+
+                    const baseR = this.radius * 0.95;
+                    const tipR = 2.0;
+
+                    // 1. Outer Conical Fire Tail
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, baseR, angle - Math.PI / 2, angle + Math.PI / 2);
+                    ctx.lineTo(tipX + nx * tipR, tipY + ny * tipR);
+                    ctx.arc(tipX, tipY, tipR, tailAngle - Math.PI / 2, tailAngle + Math.PI / 2);
+                    ctx.lineTo(this.x - nx * baseR, this.y - ny * baseR);
+                    ctx.closePath();
+
+                    // Exact gradient colors from frame 024-025:
+                    // Hot yellow/white near head -> warm orange -> vivid magenta/pink -> purple -> transparent
+                    const tailGrad = ctx.createLinearGradient(this.x, this.y, tipX, tipY);
+                    tailGrad.addColorStop(0.00, '#fffbe6');
+                    tailGrad.addColorStop(0.12, '#ffd748');
+                    tailGrad.addColorStop(0.35, '#ff8033');
+                    tailGrad.addColorStop(0.65, '#e63b78');
+                    tailGrad.addColorStop(0.88, '#6c328e');
+                    tailGrad.addColorStop(1.00, 'rgba(50, 20, 80, 0)');
+                    ctx.fillStyle = tailGrad;
+                    ctx.fill();
+
+                    // 2. Bright Inner Core Flame
+                    const innerLen = this.tailLen * 0.62;
+                    const inTipX = this.x + Math.cos(tailAngle) * innerLen;
+                    const inTipY = this.y + Math.sin(tailAngle) * innerLen;
+                    const inBaseR = baseR * 0.52;
+
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, inBaseR, angle - Math.PI / 2, angle + Math.PI / 2);
+                    ctx.lineTo(inTipX + nx * 1.2, inTipY + ny * 1.2);
+                    ctx.arc(inTipX, inTipY, 1.2, tailAngle - Math.PI / 2, tailAngle + Math.PI / 2);
+                    ctx.lineTo(this.x - nx * inBaseR, this.y - ny * inBaseR);
+                    ctx.closePath();
+
+                    const inGrad = ctx.createLinearGradient(this.x, this.y, inTipX, inTipY);
+                    inGrad.addColorStop(0.00, '#ffffff');
+                    inGrad.addColorStop(0.20, '#ffea88');
+                    inGrad.addColorStop(0.60, '#ff9a44');
+                    inGrad.addColorStop(1.00, 'rgba(255, 120, 50, 0)');
+                    ctx.fillStyle = inGrad;
+                    ctx.fill();
+
+                    // 3. Cratered Moon Rock Head
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+
+                    // Soft warm aura around head
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius * 1.15, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 235, 170, 0.32)';
+                    ctx.fill();
+
+                    // Moon rock texture clipping
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                    ctx.clip();
+
+                    ctx.rotate(this.rot);
+                    if (this.isBonus && imgs.bmeteor.complete) {
+                        // Big meteor crater texture
+                        ctx.drawImage(imgs.bmeteor, 388, 8, 267, 234, -this.radius, -this.radius, this.radius * 2, this.radius * 2);
+                    } else if (imgs.meteor.complete) {
+                        // Standard meteor crater texture (smeteor_05)
+                        ctx.drawImage(imgs.meteor, 696, 72, 185, 183, -this.radius, -this.radius, this.radius * 2, this.radius * 2);
+                    }
+                    ctx.restore();
+                }
+
+                ctx.restore();
+            }
+        }
+
+        // Sliced Meteor Halves
+        class SlicedHalf {
+            constructor(isBonus, x, y, vx, vy, side, rot, radius) {
+                this.isBonus = isBonus;
+                this.x = x;
+                this.y = y;
+                this.vx = vx + (side === 'left' ? -4.2 : 4.2);
+                this.vy = vy - 1.8;
+                this.rot = rot;
+                this.rotSpeed = side === 'left' ? -0.08 : 0.08;
+                this.side = side;
+                this.radius = radius;
+                this.alpha = 1.0;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.32;
+                this.rot += this.rotSpeed;
+                this.alpha -= 0.024;
+            }
+
+            draw(ctx) {
+                if (this.alpha <= 0) return;
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.translate(this.x, this.y);
+
+                ctx.beginPath();
+                if (this.side === 'left') {
+                    ctx.rect(-this.radius * 1.2, -this.radius * 1.2, this.radius * 1.2, this.radius * 2.4);
+                } else {
+                    ctx.rect(0, -this.radius * 1.2, this.radius * 1.2, this.radius * 2.4);
+                }
+                ctx.clip();
+
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                ctx.clip();
+
+                ctx.rotate(this.rot);
+                if (this.isBonus && imgs.bmeteor.complete) {
+                    ctx.drawImage(imgs.bmeteor, 388, 8, 267, 234, -this.radius, -this.radius, this.radius * 2, this.radius * 2);
+                } else if (imgs.meteor.complete) {
+                    ctx.drawImage(imgs.meteor, 696, 72, 185, 183, -this.radius, -this.radius, this.radius * 2, this.radius * 2);
+                }
+
+                ctx.restore();
+            }
+        }
+
+        // --- 7. Slice Particle FX (Exact Match to Frame 024) ---
+        function spawnSliceHitEffect(x, y) {
+            // 1. Flipbook hit effect
+            hitEffects.push({
+                x, y,
+                frame: 0,
+                max: METEOR_FX_FRAMES.length,
+                speed: 0.45
+            });
+
+            // 2. Exact white circular bubble orbs bursting outward (frame 024)
+            spawnBubbleBurst(x, y, 8);
+        }
+
+        function spawnBubbleBurst(x, y, count) {
+            for (let i = 0; i < count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const spd = Math.random() * 5.5 + 2.0;
+                bubbles.push({
+                    x: x + (Math.random() - 0.5) * 8,
+                    y: y + (Math.random() - 0.5) * 8,
+                    vx: Math.cos(angle) * spd,
+                    vy: Math.sin(angle) * spd,
+                    radius: Math.random() * 5.5 + 3.0,
+                    alpha: 1.0,
+                    decay: Math.random() * 0.035 + 0.03
+                });
+            }
+        }
+
+        // --- 8. Slicing Mechanics ---
+        function distToSegmentSquared(px, py, vx, vy, wx, wy) {
+            const l2 = (wx - vx) * (wx - vx) + (wy - vy) * (wy - vy);
+            if (l2 === 0) return (px - vx) * (px - vx) + (py - vy) * (py - vy);
+            let t = ((px - vx) * (wx - vx) + (py - vy) * (wy - vy)) / l2;
+            t = Math.max(0, Math.min(1, t));
+            const projX = vx + t * (wx - vx);
+            const projY = vy + t * (wy - vy);
+            return (px - projX) * (px - projX) + (py - projY) * (py - projY);
+        }
+
+        function checkBladeCollisions() {
+            if (bladePoints.length < 2) return;
+            const p1 = bladePoints[bladePoints.length - 2];
+            const p2 = bladePoints[bladePoints.length - 1];
+
+            if (state === 'READY') {
+                checkStartSlice(p1, p2);
+                return;
+            }
+
+            if (state !== 'PLAYING') return;
+
+            for (let i = targets.length - 1; i >= 0; i--) {
+                const target = targets[i];
+                if (target.sliced) continue;
+
+                if (distToSegmentSquared(target.x, target.y, p1.x, p1.y, p2.x, p2.y) <= (target.radius * 1.3) ** 2) {
+                    target.sliced = true;
+                    handleSlice(target);
+                    targets.splice(i, 1);
+                }
+            }
+        }
+
+        function handleSlice(target) {
+            triggerVibration();
+
+            if (target.isBomb) {
+                // Slicing a bomb is a HAZARD
+                screenShake = 18;
+                playSfx('lose', 0.9);
+                spawnBubbleBurst(target.x, target.y, 16);
+                activateHazardMode();
+                planetHealth--;
+                if (planetHealth <= 0) {
+                    gameOver(false);
+                }
+                return;
+            }
+
+            spawnSliceHitEffect(target.x, target.y);
+            halves.push(new SlicedHalf(target.isBonus, target.x, target.y, target.vx, target.vy, 'left', target.rot, target.radius));
+            halves.push(new SlicedHalf(target.isBonus, target.x, target.y, target.vx, target.vy, 'right', target.rot, target.radius));
+
+            if (target.isBonus) {
+                playSfx('bonusSlice', 0.9);
+                score += 2;
+            } else {
+                playSfx(Math.random() > 0.5 ? 'slice1' : 'slice2', 0.85);
+                score += 1;
+            }
+
+            updateScoreHUD();
+
+            // Win condition: reach 25 slices
+            if (score >= 25) {
+                gameOver(true);
+            }
+        }
+
+        function activateHazardMode() {
+            planetCracked = true;
+            hazardActive = true;
+            document.getElementById('hazardBadge').style.display = 'flex';
+            document.getElementById('btnCross').style.display = 'none';
+        }
+
+        function gameOver(isWin) {
+            state = 'OVER';
+            if (audioPool.bgMusic) audioPool.bgMusic.pause();
+
+            if (isWin) {
+                playSfx('win', 0.95);
+                document.getElementById('scoreTitle').innerText = "Yay! You won";
+                document.getElementById('scoreTitle').className = "score-title win";
+                document.getElementById('scoreSubTitle').innerText = "Cashback added to your Slice rewards";
+            } else {
+                playSfx('lose', 0.95);
+                document.getElementById('scoreTitle').innerText = "You Lost!";
+                document.getElementById('scoreTitle').className = "score-title lose";
+                document.getElementById('scoreSubTitle').innerText = "Better luck next time";
+            }
+
+            document.getElementById('finalCoinDisplay').innerText = `₹${score * 10}`;
+            document.getElementById('scoreScreenModal').classList.remove('hidden');
+        }
+
+        // --- 9. Pure White Katana Blade Trail ---
+        function addPoint(x, y) {
+            const now = performance.now();
+            bladePoints.push({ x, y, time: now });
+
+            if (now - lastSwipeSound > 160) {
+                lastSwipeSound = now;
+                playSfx(Math.random() > 0.5 ? 'swipe1' : 'swipe2', 0.45);
+            }
+
+            checkBladeCollisions();
+        }
+
+        window.addEventListener('touchstart', e => {
+            isTouching = true;
+            const t = e.touches[0];
+            bladePoints.length = 0;
+            addPoint(t.clientX, t.clientY);
+        }, { passive: false });
+
+        window.addEventListener('touchmove', e => {
+            if (!isTouching) return;
+            const t = e.touches[0];
+            addPoint(t.clientX, t.clientY);
+        }, { passive: false });
+
+        window.addEventListener('touchend', () => { isTouching = false; });
+
+        window.addEventListener('mousedown', e => {
+            isTouching = true;
+            bladePoints.length = 0;
+            addPoint(e.clientX, e.clientY);
+        });
+
+        window.addEventListener('mousemove', e => {
+            if (!isTouching) return;
+            addPoint(e.clientX, e.clientY);
+        });
+
+        window.addEventListener('mouseup', () => { isTouching = false; });
+
+        function drawBlade(now) {
+            while (bladePoints.length > 0 && now - bladePoints[0].time > MAX_BLADE_AGE) {
+                bladePoints.shift();
+            }
+            if (bladePoints.length < 2) return;
+
+            ctx.save();
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            for (let i = 1; i < bladePoints.length; i++) {
+                const p0 = bladePoints[i - 1];
+                const p1 = bladePoints[i];
+                const ratio = (now - p1.time) / MAX_BLADE_AGE;
+                const alpha = Math.max(0, 1 - ratio);
+                // Thick dynamic white katana blade
+                const w = Math.max(1.8, (1 - ratio) * 8.5);
+
+                ctx.beginPath();
+                ctx.moveTo(p0.x, p0.y);
+                ctx.lineTo(p1.x, p1.y);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = w;
+                ctx.shadowColor = '#ffffff';
+                ctx.shadowBlur = 6;
+                ctx.globalAlpha = alpha;
+                ctx.stroke();
+            }
+
+            ctx.restore();
+        }
+
+        // --- 10. Bottom Planet & Horizon Celestial Spheres ---
+        function drawPlanet() {
+            const pH = Math.max(130, height * 0.175);
+            const pY = height - pH;
+
+            // 1. Left Orange Sun on Horizon (Frame 023-025)
+            const sunX = width * 0.20;
+            const sunY = pY + 12;
+            const sunR = 26;
+
+            const sunGrad = ctx.createRadialGradient(sunX, sunY, sunR * 0.2, sunX, sunY, sunR);
+            sunGrad.addColorStop(0, '#ffea79');
+            sunGrad.addColorStop(0.7, '#ff8033');
+            sunGrad.addColorStop(1, '#ff5511');
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(sunX, sunY, sunR, 0, Math.PI * 2);
+            ctx.fillStyle = sunGrad;
+            ctx.shadowColor = '#ff7722';
+            ctx.shadowBlur = 20;
+            ctx.fill();
+
+            // Coronal dots above sun (matching frame 025)
+            ctx.fillStyle = '#ffa442';
+            const coronaPoints = [
+                { x: sunX - 10, y: sunY - 24, r: 3.2 },
+                { x: sunX + 4,  y: sunY - 26, r: 3.5 },
+                { x: sunX + 16, y: sunY - 21, r: 2.8 }
+            ];
+            coronaPoints.forEach(cp => {
+                ctx.beginPath();
+                ctx.arc(cp.x, cp.y, cp.r, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.restore();
+
+            // 2. Right White Moon on Horizon (Frame 023-025)
+            const moonX = width * 0.89;
+            const moonY = pY - 14;
+            const moonR = 15;
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(moonX, moonY, moonR, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = '#ffffff';
+            ctx.shadowBlur = 18;
+            ctx.fill();
+            ctx.restore();
+
+            // 3. Planet Surface at Bottom
+            if (imgs.planet.complete) {
+                const drawW = width * 1.1;
+                const drawX = -width * 0.05;
+
+                if (planetCracked) {
+                    // Planet04_Grey (x: 388, y: 2, w: 384, h: 156)
+                    ctx.drawImage(imgs.planet, 388, 2, 384, 156, drawX, pY, drawW, pH * 1.25);
+
+                    // Jagged cracks on grey planet (Crack02: x: 2, y: 160, w: 376, h: 649, rotate:90)
+                    ctx.drawImage(imgs.planet, 2, 160, 376, 260, width * 0.35, pY + pH * 0.1, width * 0.45, pH * 0.7);
+                } else {
+                    // Planet04 (Purple moon surface: x: 2, y: 2, w: 384, h: 156)
+                    ctx.drawImage(imgs.planet, 2, 2, 384, 156, drawX, pY, drawW, pH * 1.25);
+                }
+            }
+
+            // 4. Planet Impact Flash / Crater Effects
+            for (let i = planetImpacts.length - 1; i >= 0; i--) {
+                const imp = planetImpacts[i];
+                imp.radius += imp.growSpeed;
+                imp.alpha -= imp.decay;
+                if (imp.alpha <= 0) {
+                    planetImpacts.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(imp.x, height - pH + 20, imp.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 230, 140, ${imp.alpha * 0.75})`;
+                ctx.shadowColor = '#ffaa33';
+                ctx.shadowBlur = 24;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // --- 11. Top Left Hazard Badge Animation ---
+        function updateHazardBadge() {
+            if (!hazardActive) return;
+            const fIdx = Math.floor(bombAnimTick) % BOMB_FRAMES.length;
+            const f = BOMB_FRAMES[fIdx];
+            hCtx.clearRect(0, 0, 60, 70);
+
+            hCtx.save();
+            hCtx.translate(30, 35);
+            hCtx.rotate(-Math.PI / 2);
+            if (imgs.bomb.complete) {
+                hCtx.drawImage(imgs.bomb, f.x, f.y, f.w, f.h, -26, -22, 52, 44);
+            }
+            hCtx.restore();
+        }
+
+        // --- 12. Main Game Loop ---
+        function loop(now) {
+            bombAnimTick += 0.22;
+            updateHazardBadge();
+
+            ctx.save();
+
+            // Screen Shake on impact
+            if (screenShake > 0) {
+                const sx = (Math.random() - 0.5) * screenShake;
+                const sy = (Math.random() - 0.5) * screenShake;
+                ctx.translate(sx, sy);
+                screenShake *= 0.88;
+                if (screenShake < 0.4) screenShake = 0;
+            }
+
+            ctx.clearRect(0, 0, width, height);
+
+            // 1. Draw Twinkling Background Stars (Frame 023-028)
+            ctx.save();
+            bgStars.forEach(st => {
+                const alpha = (Math.sin(now * st.twinkleSpeed + st.phase) + 1) * 0.4 + 0.2;
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = '#ffffff';
+
+                const sx = st.x * width;
+                const sy = st.y * height;
+
+                if (st.isSpike) {
+                    // 4-point star spike
+                    ctx.beginPath();
+                    ctx.moveTo(sx, sy - st.size * 2.2);
+                    ctx.lineTo(sx + st.size * 0.6, sy);
+                    ctx.lineTo(sx, sy + st.size * 2.2);
+                    ctx.lineTo(sx - st.size * 0.6, sy);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.moveTo(sx - st.size * 2.2, sy);
+                    ctx.lineTo(sx, sy + st.size * 0.6);
+                    ctx.lineTo(sx + st.size * 2.2, sy);
+                    ctx.lineTo(sx, sy - st.size * 0.6);
+                    ctx.closePath();
+                    ctx.fill();
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, st.size * 0.8, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+            ctx.restore();
+
+            // 2. State Handling
+            if (state === 'READY') {
+                // Centered Black Circular Portal with Glowing Purple Rim (Frame 022)
+                const portalR = Math.min(width * 0.42, 170) * portalScale;
+                const portalX = width / 2;
+                const portalY = height * 0.48;
+
+                ctx.save();
+                // Outer purple glowing rim
+                ctx.beginPath();
+                ctx.arc(portalX, portalY, portalR + 10, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(125, 40, 220, 0.45)';
+                ctx.shadowColor = '#9d3bff';
+                ctx.shadowBlur = 35;
+                ctx.fill();
+
+                // Inner black portal void
+                ctx.beginPath();
+                ctx.arc(portalX, portalY, portalR, 0, Math.PI * 2);
+                ctx.fillStyle = '#060410';
+                ctx.fill();
+
+                // Preview meteor gliding through the portal
+                const mX = portalX - 20 + Math.sin(now * 0.002) * 15;
+                const mY = portalY - 10 + Math.cos(now * 0.002) * 10;
+                const mR = 20;
+
+                // Preview tail
+                ctx.beginPath();
+                ctx.arc(mX, mY, mR * 0.9, 0, Math.PI);
+                ctx.lineTo(mX + 110, mY - 90);
+                ctx.closePath();
+                const previewGrad = ctx.createLinearGradient(mX, mY, mX + 110, mY - 90);
+                previewGrad.addColorStop(0, '#ffd84c');
+                previewGrad.addColorStop(0.4, '#ff6622');
+                previewGrad.addColorStop(0.8, '#d62288');
+                previewGrad.addColorStop(1, 'transparent');
+                ctx.fillStyle = previewGrad;
+                ctx.fill();
+
+                // Preview head
+                ctx.beginPath();
+                ctx.arc(mX, mY, mR, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+                if (imgs.meteor.complete) {
+                    ctx.drawImage(imgs.meteor, 696, 72, 185, 183, mX - mR, mY - mR, mR * 2, mR * 2);
+                }
+
+                ctx.restore();
+            }
+
+            if (state === 'PLAYING') {
+                // Wave Spawner
+                if (now > nextWaveTime) {
+                    waveIndex++;
+                    // Spawn single meteor or wave with bomb
+                    targets.push(new Target(false));
+
+                    // Starting from wave 3, bombs (flaming skulls) spawn matching frame 026
+                    if (waveIndex >= 3 && Math.random() < 0.38) {
+                        setTimeout(() => {
+                            targets.push(new Target(true));
+                        }, 280);
+                    } else if (Math.random() < 0.4) {
+                        setTimeout(() => {
+                            targets.push(new Target(false));
+                        }, 320);
+                    }
+
+                    nextWaveTime = now + Math.max(900, 1800 - waveIndex * 25);
+                }
+
+                // Update & Draw Targets
+                for (let i = targets.length - 1; i >= 0; i--) {
+                    const t = targets[i];
+                    t.update();
+                    t.draw(ctx);
+
+                    // Meteor / Bomb hits bottom planet
+                    const pH = Math.max(130, height * 0.175);
+                    if (t.y > height - pH + 20) {
+                        triggerVibration();
+                        screenShake = 14;
+                        playSfx('planetHit', 0.9);
+
+                        planetImpacts.push({
+                            x: t.x,
+                            radius: 12,
+                            growSpeed: 3.5,
+                            alpha: 1.0,
+                            decay: 0.05
+                        });
+
+                        if (t.isBomb) {
+                            activateHazardMode();
+                            planetHealth -= 2;
+                        } else {
+                            planetHealth--;
+                            if (planetHealth <= 1) {
+                                activateHazardMode();
+                            }
+                        }
+
+                        if (planetHealth <= 0) {
+                            gameOver(false);
+                        }
+
+                        targets.splice(i, 1);
+                    }
+                }
+
+                // Update & Draw Sliced Halves
+                for (let i = halves.length - 1; i >= 0; i--) {
+                    const h = halves[i];
+                    h.update();
+                    h.draw(ctx);
+                    if (h.alpha <= 0 || h.y > height + 50) {
+                        halves.splice(i, 1);
+                    }
+                }
+            }
+
+            // 3. Draw Planet & Horizon Celestial Spheres
+            drawPlanet();
+
+            // 4. Draw Hit Effects (Meteor01_fx flipbook)
+            for (let i = hitEffects.length - 1; i >= 0; i--) {
+                const fx = hitEffects[i];
+                fx.frame += fx.speed;
+                const fIdx = Math.floor(fx.frame);
+
+                if (fIdx < fx.max && imgs.meteorFx.complete) {
+                    const f = METEOR_FX_FRAMES[fIdx];
+                    ctx.save();
+                    ctx.translate(fx.x, fx.y);
+
+                    // Star flare
+                    if (imgs.flares.complete && fIdx <= 3) {
+                        const flareSz = 100 * (1 - fx.frame / 4);
+                        ctx.drawImage(imgs.flares, 522, 2, 128, 128, -flareSz / 2, -flareSz / 2, flareSz, flareSz);
+                    }
+
+                    const sz = 110;
+                    ctx.drawImage(imgs.meteorFx, f.x, f.y, f.w, f.h, -sz / 2, -sz / 2, sz, sz);
+                    ctx.restore();
+                } else if (fIdx >= fx.max) {
+                    hitEffects.splice(i, 1);
+                }
+            }
+
+            // 5. Draw Bubble Particles (Frame 024)
+            for (let i = bubbles.length - 1; i >= 0; i--) {
+                const b = bubbles[i];
+                b.x += b.vx;
+                b.y += b.vy;
+                b.alpha -= b.decay;
+
+                if (b.alpha <= 0) {
+                    bubbles.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${b.alpha})`;
+                ctx.shadowColor = '#ffffff';
+                ctx.shadowBlur = 4;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // 6. Draw Katana Blade Trail
+            drawBlade(now);
+
+            ctx.restore();
+            requestAnimationFrame(loop);
+        }
+
+        // --- 13. UI Buttons ---
+        document.getElementById('btnCross').addEventListener('click', () => {
+            triggerVibration();
+            if (state === 'PLAYING') {
+                gameOver(false);
+            } else {
+                location.reload();
+            }
+        });
+
+        document.getElementById('hazardBadge').addEventListener('click', () => {
+            triggerVibration();
+        });
+
+        document.getElementById('btnPlayNext').addEventListener('click', () => {
+            triggerVibration();
+            document.getElementById('scoreScreenModal').classList.add('hidden');
+            document.getElementById('startBannerContainer').classList.remove('hidden');
+            targets.length = 0;
+            halves.length = 0;
+            hitEffects.length = 0;
+            bubbles.length = 0;
+            planetImpacts.length = 0;
+            state = 'READY';
+            hazardActive = false;
+            planetCracked = false;
+            document.getElementById('hazardBadge').style.display = 'none';
+            document.getElementById('btnCross').style.display = 'flex';
+        });
+
+        document.getElementById('btnShare').addEventListener('click', () => {
+            triggerVibration();
+            if (navigator.share) {
+                navigator.share({ title: 'Slice Rewards Fire Game', text: `I scored ₹${score * 10} playing Slice Fire Game!` }).catch(() => {});
+            }
+        });
+
+        requestAnimationFrame(loop);
+    })();
+    </script>
+</body>
+</html>

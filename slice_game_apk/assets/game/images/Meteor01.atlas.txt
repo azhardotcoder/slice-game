@@ -1,0 +1,17 @@
+Meteor01.webp
+size:881,259
+filter:Linear,Linear
+pma:true
+scale:0.5
+smeteor_05
+bounds:696,72,185,183
+offsets:40,38,256,256
+rotate:90
+smeteor_trail1_05
+bounds:363,9,248,331
+offsets:0,0,256,396
+rotate:90
+smeteor_trail2_05
+bounds:2,2,255,359
+offsets:0,0,256,391
+rotate:90

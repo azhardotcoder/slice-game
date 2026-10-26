@@ -1,0 +1,13 @@
+# Build outputs
+slice_game_apk/build/
+slice_game_apk/dist/
+slice_game_apk/test_build.apk
+
+# Decompilation dumps and raw extracted assets
+decompiled/
+backup/
+rea/
+reference_frames/
+split_config*.apk
+*.png
+.DS_Store

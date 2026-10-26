@@ -1,0 +1,114 @@
+{
+    "skeleton": {
+        "hash": "kqqgtLQEgOI",
+        "spine": "4.1.21",
+        "x": -197.16,
+        "y": -37.16,
+        "width": 211.72,
+        "height": 64.54,
+        "images": "",
+        "audio": "D:/Slice project/Anim/smeteor_05"
+    },
+    "bones": [
+        { "name": "root", "rotation": 0.1 },
+        {
+            "name": "smeteor_trail2_05",
+            "parent": "root",
+            "rotation": 117.54,
+            "x": -21.42,
+            "y": -9.48,
+            "scaleX": 0.8044,
+            "scaleY": 0.8044
+        },
+        { "name": "smeteor_trail2_06", "parent": "smeteor_trail2_05", "x": 102.84, "y": 169.67 },
+        {
+            "name": "smeteor_trail1_05",
+            "parent": "root",
+            "rotation": 117.54,
+            "x": -24.29,
+            "y": -6.66,
+            "scaleX": 0.8044,
+            "scaleY": 0.8044
+        },
+        { "name": "smeteor_trail1_06", "parent": "smeteor_trail1_05", "x": 49.76, "y": 83.41 }
+    ],
+    "slots": [
+        { "name": "smeteor_trail2_05", "bone": "smeteor_trail2_05", "attachment": "smeteor_trail2_05" },
+        { "name": "smeteor_trail1_05", "bone": "smeteor_trail1_05", "attachment": "smeteor_trail1_05" },
+        { "name": "smeteor_05", "bone": "root", "attachment": "smeteor_05" }
+    ],
+    "skins": [
+        {
+            "name": "default",
+            "attachments": {
+                "smeteor_05": {
+                    "smeteor_05": {
+                        "x": -13.24,
+                        "y": -6.15,
+                        "scaleX": 0.0804,
+                        "scaleY": 0.0804,
+                        "rotation": 117.54,
+                        "width": 512,
+                        "height": 512
+                    }
+                },
+                "smeteor_trail1_05": {
+                    "smeteor_trail1_05": {
+                        "type": "mesh",
+                        "uvs": [
+                            0.58992, 0.72782, 0.38768, 0.99999, 0, 1, 0, 0.66964, 0.71063, 0.16363, 0.96629, 0.17817
+                        ],
+                        "triangles": [0, 4, 5, 2, 3, 1, 1, 3, 0, 0, 3, 4],
+                        "vertices": [
+                            2, 1, 39.05, 13.04, 0.7687, 4, -15.47, -71.91, 0.2313, 2, 1, 18.34, -30.02, 0.99904, 4,
+                            -36.18, -114.96, 9.6e-4, 1, 1, -21.36, -30.02, 1, 2, 1, -21.36, 22.24, 0.94468, 4, -75.87,
+                            -62.7, 0.05532, 2, 1, 51.41, 102.29, 4.0e-5, 4, -3.11, 17.35, 0.99996, 1, 4, 23.07, 15.05, 1
+                        ],
+                        "hull": 6,
+                        "edges": [2, 4, 8, 10, 4, 6, 6, 8, 2, 0, 0, 10],
+                        "width": 512,
+                        "height": 791
+                    }
+                },
+                "smeteor_trail2_05": {
+                    "smeteor_trail2_05": {
+                        "type": "mesh",
+                        "uvs": [
+                            0.61631, 0.74934, 0.37272, 0.99999, 0, 1, 0, 0.78283, 0.13451, 0.66546, 0.80046, 0.08435,
+                            0.99366, 0.08435
+                        ],
+                        "triangles": [0, 5, 6, 2, 3, 1, 3, 4, 1, 1, 4, 0, 0, 4, 5],
+                        "vertices": [
+                            2, 1, 65.4, 26.03, 0.81996, 2, -37.43, -143.64, 0.18004, 2, 1, 27.99, -32.77, 0.99679, 2,
+                            -74.85, -202.44, 0.00321, 1, 1, -29.26, -32.77, 1, 2, 1, -29.27, 18.17, 0.99237, 2, -132.11,
+                            -151.49, 0.00763, 2, 1, -8.61, 45.71, 0.91706, 2, -111.45, -123.96, 0.08294, 2, 1, 93.69,
+                            182.04, 0.00125, 2, -9.15, 12.37, 0.99875, 1, 2, 20.53, 12.37, 1
+                        ],
+                        "hull": 7,
+                        "edges": [2, 4, 10, 12, 4, 6, 2, 0, 0, 12, 6, 8, 8, 10],
+                        "width": 512,
+                        "height": 782
+                    }
+                }
+            }
+        }
+    ],
+    "animations": {
+        "animation": {
+            "bones": {
+                "smeteor_trail2_05": { "rotate": [{}], "translate": [{}], "scale": [{}] },
+                "smeteor_trail2_06": {
+                    "rotate": [{ "curve": "stepped" }, { "time": 0.3333 }],
+                    "translate": [{}, { "time": 0.1667, "x": -15.61, "y": -27.44 }, { "time": 0.3333 }],
+                    "scale": [{ "curve": "stepped" }, { "time": 0.3333 }]
+                },
+                "smeteor_trail1_05": { "rotate": [{}], "translate": [{}], "scale": [{}] },
+                "smeteor_trail1_06": {
+                    "rotate": [{ "curve": "stepped" }, { "time": 0.3333 }],
+                    "translate": [{}, { "time": 0.1667, "x": 11.17, "y": 20.85 }, { "time": 0.3333 }],
+                    "scale": [{ "curve": "stepped" }, { "time": 0.3333 }]
+                }
+            }
+        }
+    }
+}
